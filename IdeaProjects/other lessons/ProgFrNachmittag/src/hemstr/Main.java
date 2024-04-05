@@ -1,31 +1,31 @@
 package hemstr;
 
+import java.util.Random;
+
 public class Main {
     public static void main(String[] args) {
         Spielfeld meinFeld = new Spielfeld();
 
         while (true) {
-            for (int i = 0; i < meinFeld.getHamsters().length; i++) {
-                if(meinFeld.getHamsters()[i] != null) {
-                    Hamster hamster = meinFeld.getHamsters()[i];
+            for (Hamster hamster : meinFeld.getHamsters()) {
 
-                    if (hamster.getIstHungrig()) {
+                boolean stehtAufEssen = hamster.getFeldZumMerken().equals(meinFeld.getSamenSymbol());
 
-                        // zugriff auf samen array vom spielfeld -> samen hat x und y koordinate
-                        for (int samenIndex = 0; samenIndex < meinFeld.getSamen().length; samenIndex++) {
-                            Samen samen = meinFeld.getSamen()[samenIndex];
-
-                            // steht der hamster auf einem samen -> hamster hat x und y koordinate
-                            // vergleiche die koordinaten, wenn ja, dann isst der hamster den samen.
-                            if (hamster.getX() == samen.getX() && hamster.getY() == samen.getY()) {
-                                hamster.essen();
-                            }
-                        }
-                    }
-
-                    hamster.bewegen();
-
+                if (hamster.getIstHungrig() && stehtAufEssen) {
+                    hamster.essen();
                 }
+
+                if (!hamster.getIstHungrig() && stehtAufEssen) {
+                    hamster.hamstern();
+                }
+
+                Random random = new Random();
+                if( random.nextDouble() < 0.1) {
+                    hamster.setIstHungrig(true);
+                }
+
+                hamster.bewegen();
+
             }
 
             meinFeld.printSpielfeld();

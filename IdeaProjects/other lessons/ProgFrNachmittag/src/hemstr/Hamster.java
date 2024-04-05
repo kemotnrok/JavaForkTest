@@ -2,6 +2,8 @@ package hemstr;
 
 import javax.security.sasl.SaslException;
 import java.nio.channels.WritableByteChannel;
+import java.util.ArrayList;
+import java.util.List;
 import java.util.Random;
 
 public class Hamster {
@@ -14,13 +16,15 @@ public class Hamster {
 
     // hat-Relationen
     private Spielfeld spielfeld;
-    private Samen[] backenSpeicher;
+    private List<Samen> backenSpeicher;
 
     // Konstruktor
     public Hamster(Spielfeld spielfeld) {
         this.spielfeld = spielfeld;
         this.spielfeld.weiseHamsterZu(this);
         this.feldZumMerken = spielfeld.getBodenSymbol();
+        this.istHungrig = false;
+        backenSpeicher = new ArrayList<>();
     }
 
     // hier wird der hamster dem spielfeld zugewiesen. Siehe Samen.
@@ -37,10 +41,13 @@ public class Hamster {
 
     public void essen() {
         istHungrig = false;
-        spielfeld.hamsterIsstSamen();
+        spielfeld.hamsterIsstSamen(this);
     }
 
-    //TODO 1: essen (wenn Hunger groß genug ist)
+    public void hamstern() {
+        spielfeld.hamsterHamstertSamen(this);
+    }
+
     //TODO 2: hamstern (wenn kein hunger da ist)
     //TODO 3: nicht passierbare felder einbauen (wie steine oder, ab jetzt dann hamster! -  mit exception)
     //TODO 4: verschiedene typen von hamstern bzw. essen
@@ -78,5 +85,9 @@ public class Hamster {
 
     public void setIstHungrig(Boolean istHungrig) {
         this.istHungrig = istHungrig;
+    }
+
+    public List<Samen> getBackenSpeicher() {
+        return backenSpeicher;
     }
 }

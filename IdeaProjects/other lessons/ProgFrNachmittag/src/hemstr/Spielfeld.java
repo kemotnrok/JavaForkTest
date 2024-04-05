@@ -1,5 +1,7 @@
 package hemstr;
 
+import java.util.ArrayList;
+import java.util.List;
 import java.util.Random;
 
 public class Spielfeld {
@@ -11,8 +13,8 @@ public class Spielfeld {
     private int groesse = 5;
 
     // hat-Relationen
-    private Samen[] samen;
-    private Hamster[] hamsters;
+    private List<Samen> samen;
+    private List<Hamster> hamsters;
 
     // Konstruktor
 
@@ -29,22 +31,22 @@ public class Spielfeld {
 
         // hier ist Logik ohne spezielle Darstellung vorhanden.
         // fuer Samen
-        samen = new Samen[groesse*groesse-1];
+        samen = new ArrayList<>();
 
         Random random = new Random();
         Integer anzahlSamen = random.nextInt(1, groesse * groesse - 1);
 
         for (int i = 0; i < anzahlSamen; i++) {
-            samen[i] = new Samen(this);
+            samen.add(new Samen(this));
         }
 
         // fuer Hamster
-        hamsters = new Hamster[groesse*groesse-1];
+        hamsters = new ArrayList<>();
 
         Integer anzahlHamster = random.nextInt(1, groesse * groesse - anzahlSamen);
 
         for (int i = 0; i < anzahlHamster; i++) {
-            hamsters[i] = new Hamster(this);
+            hamsters.add(new Hamster(this));
         }
     }
 
@@ -124,10 +126,36 @@ public class Spielfeld {
     }
 
 
-    public void hamsterIsstSamen() {
+    public void hamsterIsstSamen(Hamster hamster) {
+        for (Samen s : samen) {
+
+            boolean hamsterStehtDrauf = hamster.getX().equals(s.getX()) && hamster.getY().equals(s.getY());
+
+            if (hamsterStehtDrauf) {
+                samen.remove(s);
+                break;
+            }
+        }
+
+        // symbol im spielfeld wird überschrieben mit dem standard symbol (boden)
+        hamster.setFeldZumMerken(bodenSymbol);
     }
 
+    public void hamsterHamstertSamen(Hamster hamster) {
+        // wir wollen hier den backenspeicher mit einem essen befüllen
+        for (Samen s : samen) {
 
+            boolean hamsterStehtDrauf = hamster.getX().equals(s.getX()) && hamster.getY().equals(s.getY());
+
+            if (hamsterStehtDrauf) {
+                hamster.getBackenSpeicher().add(s);
+                samen.remove(s);
+                break;
+            }
+        }
+
+        hamster.setFeldZumMerken(bodenSymbol);
+    }
 
     public void printSpielfeld() {
         for (int i = 0; i < groesse; i++) {
@@ -141,12 +169,8 @@ public class Spielfeld {
     // getter-setter
 
 
-    public Hamster[] getHamsters() {
+    public List<Hamster> getHamsters() {
         return hamsters;
-    }
-
-    public void setHamsters(Hamster[] hamsters) {
-        this.hamsters = hamsters;
     }
 
     public String getBodenSymbol() {
@@ -157,7 +181,11 @@ public class Spielfeld {
         return hamsterSymbol;
     }
 
-    public Samen[] getSamen() {
+    public String getSamenSymbol() {
+        return samenSymbol;
+    }
+
+    public List<Samen> getSamen() {
         return samen;
     }
 }
