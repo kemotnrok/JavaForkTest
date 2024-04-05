@@ -10,6 +10,8 @@ public class Hamster {
     // Attribute
     private String namen;
     private String darstellung;
+    private String normaleDarstellung;
+    private String hungrigeDarstellung;
     private Integer x;
     private Integer y;
     private String feldZumMerken;
@@ -21,12 +23,17 @@ public class Hamster {
 
     // Konstruktor
     public Hamster(Spielfeld spielfeld) {
-        this.spielfeld = spielfeld;
-        this.spielfeld.weiseHamsterZu(this);
-        this.feldZumMerken = spielfeld.getBodenSymbol();
-        this.istHungrig = false;
         backenSpeicher = new ArrayList<>();
-        darstellung = "🐹"; //Character.toString( 58660 );
+        this.istHungrig = false;
+
+        normaleDarstellung = "🐹"; //Character.toString( 58660 );
+        hungrigeDarstellung = "🐰";
+
+        this.spielfeld = spielfeld;
+        this.feldZumMerken = spielfeld.getBodenSymbol();
+        darstellung = normaleDarstellung;
+
+        this.spielfeld.weiseHamsterZu(this);
     }
 
     // hier wird der hamster dem spielfeld zugewiesen. Siehe Samen.
@@ -41,16 +48,37 @@ public class Hamster {
         spielfeld.bewegeHamster(this, richtung);
     }
 
-    public void essen() {
+    public void verstoffwechselen() {
+        wirdZufaelligHungrig();
+
+        boolean stehtAufEssen = feldZumMerken.equals(spielfeld.getSamenSymbol());
+        if (istHungrig && stehtAufEssen) {
+            essen();
+        }
+
+        if (!istHungrig && stehtAufEssen) {
+            hamstern();
+        }
+    }
+
+    private void wirdZufaelligHungrig() {
+        Random random = new Random();
+        if( random.nextDouble() < 0.1) {
+            istHungrig = true;
+            darstellung = hungrigeDarstellung;
+        }
+    }
+
+    private void essen() {
         istHungrig = false;
+        darstellung = normaleDarstellung;
         spielfeld.hamsterIsstSamen(this);
     }
 
-    public void hamstern() {
+    private void hamstern() {
         spielfeld.hamsterHamstertSamen(this);
     }
 
-    //TODO 2: hamstern (wenn kein hunger da ist)
     //TODO 3: nicht passierbare felder einbauen (wie steine oder, ab jetzt dann hamster! -  mit exception)
     //TODO 4: verschiedene typen von hamstern bzw. essen
 
@@ -72,7 +100,7 @@ public class Hamster {
     }
 
     public void setFeldZumMerken(String feldZumMerken) {
-        if(!feldZumMerken.equals(darstellung) || !feldZumMerken.equals(new HungrigerHamster(spielfeld).getDarstellung())) {
+        if(feldZumMerken != null) {
             this.feldZumMerken = feldZumMerken;
         }
     }
@@ -99,5 +127,13 @@ public class Hamster {
 
     public void setDarstellung(String darstellung) {
         this.darstellung = darstellung;
+    }
+
+    public String getHungrigeDarstellung() {
+        return hungrigeDarstellung;
+    }
+
+    public String getNormaleDarstellung() {
+        return normaleDarstellung;
     }
 }
