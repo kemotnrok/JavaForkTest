@@ -1,2 +1,1 @@
-a.b@c.ac.at~aA#7aA#7
-qwer@QWERZ.why.thi~aA#8aA#8
+a.7@B.at~a.7@B.at~false~null~false
